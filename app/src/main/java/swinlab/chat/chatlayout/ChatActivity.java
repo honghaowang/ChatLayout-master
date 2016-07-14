@@ -60,6 +60,11 @@ public class ChatActivity extends ActionBarActivity {
         mPermission.addPermissionList("android.permission.WRITE_EXTERNAL_STORAGE");
         mPermission.getPermission();
 
+        MovesDBHelper mDBHelper = new MovesDBHelper(getApplicationContext());
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+
+        db.execSQL(DBconstant.CREATE_MOVES_DATA_TABLE);
+
         setContentView(R.layout.activity_chat);
         deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         initControls();     // Message controller
@@ -258,7 +263,7 @@ public class ChatActivity extends ActionBarActivity {
         try {
             jsonObject.put("deviceID", android_id);
             jsonObject.put("messageID", "Agent2");
-            jsonObject.put("localTime", Calendar.getInstance().getTime());
+            jsonObject.put("localTime", System.currentTimeMillis());
             jsonObject.put("message", "What did you eat?");
             jsonObject.put("msgFrom", "agent");
             jsonObject.put("msgTo", android_id);
@@ -266,9 +271,9 @@ public class ChatActivity extends ActionBarActivity {
         } catch (JSONException e){
             e.printStackTrace();
         }
-        new Send2swin03("message", jsonObject);
+        new Send2swin03(Constant.MESSAGE_TYPE, jsonObject);
         //send --> end
-        
+
         msg1.setDate(DateFormat.getDateTimeInstance().format(new Date()));
         chatHistory.add(msg1);
 
@@ -324,7 +329,7 @@ public class ChatActivity extends ActionBarActivity {
         MovesDBHelper mDBHelper = new MovesDBHelper(getApplicationContext());
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
 
-        db.execSQL(DBconstant.CREATE_MOVES_DATA_TABLE);
+        //db.execSQL(DBconstant.CREATE_MOVES_DATA_TABLE);
 
         Cursor mCursor = db.query(
                 DBconstant.MOVES_DATA_TABLE,            // The table to query
@@ -335,6 +340,8 @@ public class ChatActivity extends ActionBarActivity {
                 null,                                   // don't filter by row groups
                 null                                    // The sort order
         );
+        if(mCursor == null)
+            return "You reached 0 steps";
         mCursor.moveToLast();
         String steps = null;
         try {
@@ -343,7 +350,7 @@ public class ChatActivity extends ActionBarActivity {
             e.printStackTrace();
             steps = "0";
         }
-        return "You reached " + steps + "steps";
+        return "You reached " + steps + " steps";
     }
 
     private String getFoodResponse(String messageText){

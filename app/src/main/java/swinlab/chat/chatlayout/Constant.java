@@ -14,7 +14,9 @@ public class Constant {
     public static final String REDIRECT_URI = "http://swin06.cs.uml.edu/processdata/";
     public static final String MOVES_SCOPES = "location activity";
 
-
+    //
+    public static final String MESSAGE_TYPE = "message";
+    public static final String MOVES_TYPE = "moves";
 
     //
     public static final String POST_FILE_URL = "http://swin06.cs.uml.edu/processdata/autotest";
